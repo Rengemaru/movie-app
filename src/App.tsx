@@ -1,5 +1,5 @@
 import './App.css'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   // TypeScript
@@ -31,6 +31,26 @@ function App() {
   ]
   // const [変数, 状態を管理する変数] = useState("初期値")と書くと状態を管理できるhookを使えるようになる → onclick(クリック属性)、onChange(リアルタイム変更)、onkeydown(キー入力受け付け)で使用できる
   const [keyword, setKeyword] = useState("");
+  // asyncで非同期処理の関数にできる
+  const fetchMovieList = async() => {
+    const response = await fetch(
+      "https://api.themoviedb.org/3/tv/popular?language=ja&page=1",
+      {
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`
+          // import.meta.env.VITE_TMDB_API_KEY; ← VITEの場合だとこ2の書き方で勝手にenvに飛んで値をとってきてくれる
+        },
+      }
+    );
+
+    const data = await response.json();
+    // こう書くことで持ってきたデータをjsonとして扱うことができる
+    console.log(data)
+  }
+
+  useEffect(() => {
+    fetchMovieList()
+  }, []);
 
   return (
     // HTMLなどを書く部分
