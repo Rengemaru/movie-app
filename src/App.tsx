@@ -16,7 +16,7 @@ type MovieJson = {
   genre_ids: number[],
   id: number,
   original_language: string,
-  original_name: string,
+  original_title: string,
   overview: string,
   popularity: number,
   poster_path: string,
@@ -36,34 +36,46 @@ function App() {
   // asyncで非同期処理にできる → awaitをつけずにfetchをつけるとfetchに時間がかかった場合すぐ次の処理(jsonに直す)に行ってしまうためデータが帰ってきてない状態で次に行ってしまう → つじつまが合わなくなってしまう
   // awaitを使うことでデータのレスポンスが帰ってきてから次の処理に行くようにできる
   const fetchMovieList = async() => {
-    const response = await fetch(
-      "https://api.themoviedb.org/3/tv/popular?language=ja&page=1",
-      {
+    // キーワード検索のためにurlを変数にする
+    let url = ""
+    // keywordがある場合はAPIのsearchのqueryにkeywordを渡し、ない場合はAPIの一覧表示を渡す
+    // searchとpopularのAPI側の型が違う場合(今回の場合は original_title と original_name が違った)popularではうまくいくのに、searchに切り替えたらTypeErrorをはくということがあるのできちんと型を見るように
+    if (keyword) {
+      url = `https://api.themoviedb.org/3/search/movie?query=${keyword}&include_adult=false&language=ja&page=1`;
+    } else {
+      url = "https://api.themoviedb.org/3/movie/popular?language=ja&page=1";
+    }
+
+    // 検索と一覧表示を切り替えれるようにurlに変更　"https://api.themoviedb.org/3/tv/popular?language=ja&page=1" → url
+    const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`
           // import.meta.env.VITE_TMDB_API_KEY; ← VITEの場合だとこ2の書き方で勝手にenvに飛んで値をとってきてくれる
         },
       }
     );
+
     // jsonも上(await fetch)と同じ理由で時間がかかることがあるため await で待ってあげて、レスポンスが帰ってきてから次の処理に行くようにしてあげる
     const data = await response.json();
+
     // こう書くことで持ってきたデータをjsonとして扱うことができる
+    // APIの方で results の中にデータが格納されているため、キャッシュは results
     // Jsonに直すときに、MovieとMovieJsonの型をすり合わせる
     setMovieList(data.results.map((movie: MovieJson) => ({
       id: movie.id,
-      name: movie.original_name,
+      name: movie.original_title,
       image: movie.poster_path,
       overview: movie.overview,
     })));
-    // APIの方で results の中にデータが格納されているため、キャッシュは results
   }
+
   // useEffect：画面が表示される前に実行されるもの → 空括弧を入れている理由がそれ
   // 第二引数：依存配列
   // 実はuseEffectでデータ取得はしないほうがいい → React QueryやSWRなどのライブラリを利用してデータを取得する
   useEffect(() => {
     // 処理
     fetchMovieList()
-  }, []);
+  }, [keyword]);
 
   return (
     // HTMLなどを書く部分
