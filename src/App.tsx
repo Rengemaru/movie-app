@@ -1,4 +1,5 @@
 import './App.css'
+import { useState } from "react";
 
 function App() {
   // TypeScript
@@ -28,13 +29,23 @@ function App() {
       overview: "スティーブン・スピルバーグとロバート・ゼメキスが贈るSFアドベンチャーシリーズ第1弾。高校生のマーティは、科学者・ドクの発明したタイムマシン・デロリアンで過去にタイムスリップしてしまう。",
     }
   ]
+  // const [変数, 状態を管理する変数] = useState("初期値")と書くと状態を管理できるhookを使えるようになる → onclick(クリック属性)、onChange(リアルタイム変更)、onkeydown(キー入力受け付け)で使用できる
+  const [keyword, setKeyword] = useState("");
 
   return (
     // HTMLなどを書く部分
     <div>
+      <div>{keyword}</div>
+        {/* onChangeを使用してリアルタイム変更、setKeywordで状態を変更させる */}
+        <input type='text' onChange={(e) => setKeyword(e.target.value)}/>
       <div>
-        {/* mapを使うことによって動的にループで配置できる */}
-        {defaultMovieList.map((movie) => (
+        {/* mapを使うことによって動的にループで配置できる 
+            filter(条件) → trueのものは表示、falseのものは非表示にできる
+            filterの条件にincludesを使用することでその内容が含まれているかという条件にすることができる
+            ※この場合はmovie.nameにkeywordが含まれているかという条件になる */}
+        {defaultMovieList
+        .filter((movie) => movie.name.includes(keyword))
+        .map((movie) => (
           <div key={movie.id}>
             {/* keyをつけることによって効率的に、より整合性を持って画面の更新ができる　←　つけないといけないんだなーと思えばいい */}
             <h2>{movie.name}</h2>
