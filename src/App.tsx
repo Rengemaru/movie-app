@@ -1,9 +1,10 @@
 import './App.css'
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 
 // このアプリで使用するtype
 type Movie = {
-  id: number,
+  id: string,
   name: string,
   image: string,
   overview: string,
@@ -14,7 +15,7 @@ type MovieJson = {
   adult: boolean,
   backdrop_path: string,
   genre_ids: number[],
-  id: number,
+  id: string,
   original_language: string,
   original_title: string,
   overview: string,
@@ -91,12 +92,12 @@ function App() {
         {movieList
         .filter((movie) => movie.name.includes(keyword))
         .map((movie) => (
-          <div key={movie.id}>
+          <Link to={`/movie/${movie.id}`} key={movie.id}>
             {/* keyをつけることによって効率的に、より整合性を持って画面の更新ができる　←　つけないといけないんだなーと思えばいい */}
             <h2>{movie.name}</h2>
             <img src={`https://media.themoviedb.org/t/p/w300_and_h450_face/${movie.image}`} />
             <p>{movie.overview}</p>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
