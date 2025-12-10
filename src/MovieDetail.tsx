@@ -64,28 +64,38 @@ function MovieDetail() {
   }, []);
 
   const fetchMovieDetail = async () => {
-    const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-    const response = await fetch(
-      `https://api.themoviedb.org/3/movie/${movieId}?language=ja&page=1&append_to_response=credits`,
-      {
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-        },
+    try {
+      const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+      const response = await fetch(
+        `https://api.themoviedb.org/3/movie/${movieId}?language=ja&page=1&append_to_response=credits`,
+        {
+          headers: {
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch movie details");
       }
-    );
-    const data = (await response.json()) as MovieDetailJson;
-    setMovie({
-      id: data.id,
-      original_title: data.title,
-      poster_path: data.poster_path,
-      year: Number(data.release_date.split("-")[0]),
-      rating: data.vote_average,
-      runtime: data.runtime,
-      score: data.vote_count,
-      overview: data.overview,
-      genres: data.genres.map((genre) => genre.name),
-    });
+
+      const data = (await response.json()) as MovieDetailJson;
+      setMovie({
+        id: data.id,
+        original_title: data.title,
+        poster_path: data.poster_path,
+        year: Number(data.release_date.split("-")[0]),
+        rating: data.vote_average,
+        runtime: data.runtime,
+        score: data.vote_count,
+        overview: data.overview,
+        genres: data.genres.map((genre) => genre.name),
+      });
+    } catch (error) {
+      console.error("Error fetching movie details:", error);
+    }
   };
+
   return (
     <div className="movie-detail-root">
       {movie && (

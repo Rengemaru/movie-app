@@ -1,13 +1,14 @@
 import './App.css'
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
+import MovieCard from './MovieCard';
 
 // このアプリで使用するtype
 type Movie = {
   id: string,
-  name: string,
+  original_title: string,
   image: string,
   overview: string,
+  poster_path: string,
 }
 
 // APIのデータの中で定義されているtype
@@ -64,8 +65,8 @@ function App() {
     // Jsonに直すときに、MovieとMovieJsonの型をすり合わせる
     setMovieList(data.results.map((movie: MovieJson) => ({
       id: movie.id,
-      name: movie.original_title,
       image: movie.poster_path,
+      poster_path: movie.poster_path,
       overview: movie.overview,
     })));
   }
@@ -114,37 +115,20 @@ function App() {
         <h2 className="movie-row-title">
           {keyword ? `「${keyword}」の検索結果` : "人気映画"}
         </h2>
-        <div className='movie-row-scroll'>
-        </div>
-          {movieList
-          .filter((movie) => movie.name.includes(keyword))
-          .map((movie) => (
-            <Link 
-              to={`/movie/${movie.id}`} 
-              key={movie.id}
-              className='movie-card'
-            >
-              <div className='movie-card__imgwiap'>
-                <img 
-                  src={`https://media.themoviedb.org/t/p/w300_and_h450_face/${movie.image}`} 
-                  alt={movie.name}
-                  className='movie-card__image'
-                />
-              </div>
-              <div className='movie-card__overlay'>
-                <h3 className='movie-card__title'>{movie.name}</h3>
-              </div>
-            </Link>
+        <div className="movie-row-scroll">
+          {movieList.map((movie) => (
+            <MovieCard movie={movie} key={movie.id} />
           ))}
-        </section>
-        <div className="app-search-wrap">
-          <input
-            type="text"
-            className="app-search"
-            placeholder="映画タイトルで検索..."
-            onChange={(e) => setKeyword(e.target.value)}
-          />
         </div>
+      </section>
+      <div className="app-search-wrap">
+        <input
+          type="text"
+          className="app-search"
+          placeholder="映画タイトルで検索..."
+          onChange={(e) => setKeyword(e.target.value)}
+        />
+      </div>
     </div>
   );
 }
