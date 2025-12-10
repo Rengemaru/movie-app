@@ -78,28 +78,73 @@ function App() {
     fetchMovieList()
   }, [keyword]);
 
+  const heroTitle = "君の名は。"
+  const heroYear = 2016
+  const heroOverview = "1,000年に1度のすい星来訪が、1か月後に迫る日本。山々に囲まれた田舎町に住む女子高生の三葉は、町長である父の選挙運動や、家系の神社の風習などに鬱屈（うっくつ）していた。それゆえに都会への憧れを強く持っていたが、ある日彼女は自分が都会に暮らしている少年になった夢を見る。夢では東京での生活を楽しみながらも、その不思議な感覚に困惑する三葉。一方、東京在住の男子高校生・瀧も自分が田舎町に生活する少女になった夢を見る。やがて、その奇妙な夢を通じて彼らは引き合うようになっていくが……。"
+  const heroImage = "https://media.themoviedb.org/t/p/w300_and_h450_face/yLglTwyFOUZt5fNKm0PWL1PK5gm.jpg"
+
   return (
-    // HTMLなどを書く部分
     <div>
-      <div>{keyword}</div>
-        {/* onChangeを使用してリアルタイム変更、setKeywordで状態を変更させる */}
-        <input type='text' onChange={(e) => setKeyword(e.target.value)}/>
-      <div>
-        {/* mapを使うことによって動的にループで配置できる 
-            filter(条件) → trueのものは表示、falseのものは非表示にできる
-            filterの条件にincludesを使用することでその内容が含まれているかという条件にすることができる
-            ※この場合はmovie.nameにkeywordが含まれているかという条件になる */}
-        {movieList
-        .filter((movie) => movie.name.includes(keyword))
-        .map((movie) => (
-          <Link to={`/movie/${movie.id}`} key={movie.id}>
-            {/* keyをつけることによって効率的に、より整合性を持って画面の更新ができる　←　つけないといけないんだなーと思えばいい */}
-            <h2>{movie.name}</h2>
-            <img src={`https://media.themoviedb.org/t/p/w300_and_h450_face/${movie.image}`} />
-            <p>{movie.overview}</p>
-          </Link>
-        ))}
-      </div>
+      <section className="hero-section">
+        {heroImage && (
+          <>
+            <img className="hero-section-bg" src={heroImage} alt={heroTitle} />
+            <div className="hero-section-gradient" />
+          </>
+        )}
+        <div className="hero-section-content">
+          <h1 className="hero-section-title">{heroTitle}</h1>
+          <div className="hero-section-badges">
+            <span className="hero-section-badge">{heroYear}</span>
+          </div>
+          {heroOverview && (
+            <p className="hero-section-overview">{heroOverview}</p>
+          )}
+          <div className="hero-section-actions">
+            <button className="hero-section-btn hero-section-btn-primary">
+              <span>▶ Play</span>
+            </button>
+            <button className="hero-section-btn hero-section-btn-secondary">
+              <span>More Info</span>
+            </button>
+          </div>
+        </div>
+      </section>
+      <section className="movie-row-section">
+        <h2 className="movie-row-title">
+          {keyword ? `「${keyword}」の検索結果` : "人気映画"}
+        </h2>
+        <div className='movie-row-scroll'>
+        </div>
+          {movieList
+          .filter((movie) => movie.name.includes(keyword))
+          .map((movie) => (
+            <Link 
+              to={`/movie/${movie.id}`} 
+              key={movie.id}
+              className='movie-card'
+            >
+              <div className='movie-card__imgwiap'>
+                <img 
+                  src={`https://media.themoviedb.org/t/p/w300_and_h450_face/${movie.image}`} 
+                  alt={movie.name}
+                  className='movie-card__image'
+                />
+              </div>
+              <div className='movie-card__overlay'>
+                <h3 className='movie-card__title'>{movie.name}</h3>
+              </div>
+            </Link>
+          ))}
+        </section>
+        <div className="app-search-wrap">
+          <input
+            type="text"
+            className="app-search"
+            placeholder="映画タイトルで検索..."
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+        </div>
     </div>
   );
 }

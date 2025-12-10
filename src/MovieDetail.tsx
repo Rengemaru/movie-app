@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import "./MovieDetail.css";
 
 type Movie = {
   id: string;
