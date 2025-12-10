@@ -5,6 +5,7 @@ import App from './App.tsx'
 import MovieDetail from './MovieDetail.tsx'
 // react-routerでルーティングができるように
 import { createBrowserRouter, RouterProvider } from 'react-router'
+import Header from './Header.tsx'
 
 // ルーティングのエンドポイントを設定
 const router = createBrowserRouter([
@@ -14,7 +15,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {/* RouterProviderを使用しエンドポイントを有効化 */}
-    <RouterProvider router={router} />
+    <Header>
+      {/* RouterProviderを使用しエンドポイントを有効化 */}
+      <RouterProvider router={router} />
+    </Header>
   </StrictMode>,
 )
